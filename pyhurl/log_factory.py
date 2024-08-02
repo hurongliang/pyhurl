@@ -60,6 +60,3 @@ class LogFactory:
             'propagate': False
         }
         logging.config.dictConfig(cls.logging_configs)
-
-
-app_logger = LogFactory.get_logger('app')

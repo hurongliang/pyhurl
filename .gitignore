@@ -1,4 +1,7 @@
 .idea
 venv
-.env
+pyhurl/.env
 *.pyc
+build
+dist
+pyhurl.egg-info
