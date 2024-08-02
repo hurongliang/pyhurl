@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pyhurl',
-    version='1.0.0',
+    version='1.0.1',
     description='A set of useful functions that I use in projects.',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -19,5 +19,7 @@ setup(
         "openai",
         "ollama"
     ],
-    license='MIT'
+    license='MIT',
+    url='https://github.com/hurongliang/pyhurl',
+    python_requires='>=3.8',
 )
