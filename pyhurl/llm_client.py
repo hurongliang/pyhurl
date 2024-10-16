@@ -18,22 +18,24 @@ class LLMClient:
     ollama_client = Client(host=ollama_host)
 
     @classmethod
-    def call_openai(cls, messages: list[dict], model=None):
+    def call_openai(cls, messages: list[dict], model=None, temperature=0.1, max_tokens=None, timeout=None):
         response = cls.openai_client.chat.completions.create(
             model=cls.openai_model if model is None else model,
             messages=messages,
             stream=False,
-            temperature=0.5,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            timeout=timeout,
             tool_choice='auto',
             top_p=1)
         return response.choices[0].message.content
 
     @classmethod
-    def call_ollama(cls, messages: list[dict], model=None):
-        return cls.ollama_client.chat(model=model if model else cls.ollama_model, messages=messages)['message']['content']
+    def call_ollama(cls, messages: list[dict], model=None, options=None):
+        return cls.ollama_client.chat(model=model if model else cls.ollama_model, messages=messages, options=options)['message']['content']
 
     @classmethod
-    def find_all_json_datas(cls, text) -> list[object]:
+    def find_all_json_datas(cls, text):
         if not text:
             return []
         try:
@@ -47,3 +49,8 @@ class LLMClient:
                     return []
             else:
                 return []
+
+    @classmethod
+    def find_first_json_data(cls, text):
+        datas = cls.find_all_json_datas(text)
+        return datas[0] if len(datas) > 0 else None

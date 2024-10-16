@@ -27,7 +27,10 @@ class SqliteClient(ABC):
         connection.close()
 
     @classmethod
-    def execute_query(cls, sql, sql_params=None):
+    def fetch_many(cls, sql, sql_params=None):
+        """
+        query db and return all rows
+        """
         connection = cls.__get_connection()
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
@@ -39,14 +42,62 @@ class SqliteClient(ABC):
         return rows
 
     @classmethod
-    def execute_update(cls, sql, params=None) -> Optional[int]:
+    def fetch_one(cls, sql, sql_params=None):
+        """
+        query db and return first row
+        """
+        rows = cls.fetch_many(sql, sql_params)
+        return rows[0] if rows else None
+
+    @classmethod
+    def fetch_value(cls, sql, sql_params=None):
+        """
+        query db and return first element of first row
+        """
+        row = cls.fetch_one(sql, sql_params)
+        return row[0] if row else None
+
+
+    @classmethod
+    def insert(cls, sql, params=None) -> Optional[int]:
+        """
+        insert into db and return last insert id
+        """
         connection = cls.__get_connection()
         cursor = connection.cursor()
-        if params:
-            cursor.execute(sql, params)
-        else:
-            cursor.execute(sql)
-        last_id = cursor.lastrowid
-        connection.commit()
-        connection.close()
+        cursor.execute("BEGIN;")
+        try:
+            if params:
+                cursor.execute(sql, params)
+            else:
+                cursor.execute(sql)
+            last_id = cursor.lastrowid
+            connection.commit()
+        except sqlite3.OperationalError:
+            connection.rollback()
+            last_id = None
+        finally:
+            connection.close()
         return last_id
+
+    @classmethod
+    def update(cls, sql, params=None) -> int:
+        """
+        update db and return affected rows
+        """
+        connection = cls.__get_connection()
+        cursor = connection.cursor()
+        cursor.execute("BEGIN;")
+        try:
+            if params:
+                cursor.execute(sql, params)
+            else:
+                cursor.execute(sql)
+            affected_rows = cursor.rowcount
+            connection.commit()
+        except sqlite3.OperationalError:
+            connection.rollback()
+            affected_rows = 0
+        finally:
+            connection.close()
+        return affected_rows
