@@ -73,9 +73,9 @@ class SqliteClient(ABC):
                 cursor.execute(sql)
             last_id = cursor.lastrowid
             connection.commit()
-        except sqlite3.OperationalError:
+        except sqlite3.OperationalError as e:
             connection.rollback()
-            last_id = None
+            raise e
         finally:
             connection.close()
         return last_id
@@ -95,9 +95,9 @@ class SqliteClient(ABC):
                 cursor.execute(sql)
             affected_rows = cursor.rowcount
             connection.commit()
-        except sqlite3.OperationalError:
+        except sqlite3.OperationalError as e:
             connection.rollback()
-            affected_rows = 0
+            raise e
         finally:
             connection.close()
         return affected_rows

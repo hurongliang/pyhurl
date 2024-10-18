@@ -18,3 +18,7 @@ A set of useful functions that I use in projects.
   - fix database lock error
   - rename methods for better readability
 - Important: SqliteClient class is not compatible with previous versions, please adjust your code accordingly.
+
+1.0.4
+- Fix SqliteClient:
+  - fix discard exception when update error
