@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pyhurl',
-    version='1.0.4',
+    version='1.0.5',
     description='A set of useful functions that I use in projects.',
     long_description=long_description,
     long_description_content_type="text/markdown",

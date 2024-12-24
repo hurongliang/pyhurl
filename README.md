@@ -22,3 +22,6 @@ A set of useful functions that I use in projects.
 1.0.4
 - Fix SqliteClient:
   - fix discard exception when update error
+
+1.0.5
+- Use LLMClient instance instead of LLMClient class to make it more flexible.

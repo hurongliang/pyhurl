@@ -7,20 +7,22 @@ from ollama import Client
 
 
 class LLMClient:
-    load_dotenv()
-    openai_key = os.getenv('PYHURL_OPENAI_API')
-    openai_model = os.getenv('PYHURL_OPENAI_MODEL')
-    openai_api_base = os.getenv('PYHURL_OPENAI_API_BASE')
-    openai_client = OpenAI(api_key=openai_key, base_url=openai_api_base)
+    initiated = False
 
-    ollama_host = os.getenv('PYHURL_OLLAMA_HOST', 'http://localhost:11434')
-    ollama_model = os.getenv('PYHURL_OLLAMA_MODEL', 'llama2')
-    ollama_client = Client(host=ollama_host)
+    def __init__(self, openai_api_key=None, openai_model=None, openai_api_base=None, ollama_host=None, ollama_model=None):
+        load_dotenv()
+        openai_key = os.getenv('PYHURL_OPENAI_API') if openai_api_key is None else openai_api_key
+        self.openai_model = os.getenv('PYHURL_OPENAI_MODEL') if openai_model is None else openai_model
+        openai_api_base = os.getenv('PYHURL_OPENAI_API_BASE') if openai_api_base is None else openai_api_base
+        self.openai_client = OpenAI(api_key=openai_key, base_url=openai_api_base)
 
-    @classmethod
-    def call_openai(cls, messages: list[dict], model=None, temperature=0.1, max_tokens=None, timeout=None):
-        response = cls.openai_client.chat.completions.create(
-            model=cls.openai_model if model is None else model,
+        ollama_host = os.getenv('PYHURL_OLLAMA_HOST', 'http://localhost:11434') if ollama_host is None else ollama_host
+        self.ollama_model = os.getenv('PYHURL_OLLAMA_MODEL', 'llama2') if ollama_model is None else ollama_model
+        self.ollama_client = Client(host=ollama_host)
+
+    def call_openai(self, messages: list[dict], model=None, temperature=0.1, max_tokens=None, timeout=None):
+        response = self.openai_client.chat.completions.create(
+            model=self.openai_model if model is None else model,
             messages=messages,
             stream=False,
             temperature=temperature,
@@ -30,9 +32,8 @@ class LLMClient:
             top_p=1)
         return response.choices[0].message.content
 
-    @classmethod
-    def call_ollama(cls, messages: list[dict], model=None, options=None):
-        return cls.ollama_client.chat(model=model if model else cls.ollama_model, messages=messages, options=options)['message']['content']
+    def call_ollama(self, messages: list[dict], model=None, options=None):
+        return self.ollama_client.chat(model=model if model else self.ollama_model, messages=messages, options=options)['message']['content']
 
     @classmethod
     def find_all_json_datas(cls, text):
