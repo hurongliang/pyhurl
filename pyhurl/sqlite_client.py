@@ -3,6 +3,7 @@ import sqlite3
 from abc import ABC
 from typing import Optional
 from dotenv import load_dotenv
+from math import sqrt
 
 
 class SqliteClient(ABC):
@@ -12,12 +13,16 @@ class SqliteClient(ABC):
     @classmethod
     def __get_connection(cls):
         try:
-            return sqlite3.connect(cls.db_file)
+            conn = sqlite3.connect(cls.db_file)
+            conn.create_function("sqrt", 1, sqrt)
+            return conn
         except sqlite3.OperationalError:
             parent_folder = os.path.dirname(cls.db_file)
             if not os.path.exists(parent_folder):
                 os.makedirs(parent_folder)
-            return sqlite3.connect(cls.db_file)
+            conn = sqlite3.connect(cls.db_file)
+            conn.create_function("sqrt", 1, sqrt)
+            return conn
 
     @classmethod
     def execute_script(cls, script):

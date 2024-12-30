@@ -25,3 +25,6 @@ A set of useful functions that I use in projects.
 
 1.0.5
 - Use LLMClient instance instead of LLMClient class to make it more flexible.
+
+1.0.6
+- fix sqlite function error: no such function SQRT
