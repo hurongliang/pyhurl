@@ -28,3 +28,6 @@ A set of useful functions that I use in projects.
 
 1.0.6
 - fix sqlite function error: no such function SQRT
+
+1.0.7
+- fix sqlite function error: no such function SQRT
