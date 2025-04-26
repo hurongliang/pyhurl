@@ -39,6 +39,26 @@ class MySQLClient:
             cls.close_connection(conn)
 
     @classmethod
+    def execute(cls, sql, params=None, return_lastrowid=False):
+        conn = cls.get_connection()
+        try:
+            with conn.cursor() as cursor:
+                ret = cursor.execute(sql, params)
+                lastrowid = cursor.lastrowid
+            conn.commit()
+            return lastrowid if return_lastrowid else ret
+        finally:
+            cls.close_connection(conn)
+
+    @classmethod
+    def update(cls, sql, params=None):
+        return cls.execute(sql, params, return_lastrowid=False)
+
+    @classmethod
+    def insert(cls, sql, params=None):
+        return cls.execute(sql, params, return_lastrowid=True)
+
+    @classmethod
     def fetchone(cls, sql, params=None):
         conn = cls.get_connection()
         try:
