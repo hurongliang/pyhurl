@@ -35,3 +35,7 @@ A set of useful functions that I use in projects.
 1.0.8
 - Update MysqlClient:
   - add two convenient functions: `update` and `insert`
+
+1.1.0
+- Update SqliteClient:
+  - add two convenient functions: `update` and `insert`
